@@ -27,3 +27,7 @@
 //! when it is close to expiry, and may change the session. Save it after each
 //! call. Not affiliated with OMRON Healthcare.
 
+mod error;
+mod region;
+pub use error::{Error, Result};
+pub use region::{Region, V1Region, V2Region};
