@@ -63,9 +63,22 @@ Resource use is the main design goal: the box this runs on hosts other services 
 release check (`tests/loadcheck.rs`) starts the binary against a fake OMRON, with a state
 file of 50 clients and a year of rotated refresh tokens and a cache of 2,000 readings, and
 reads `/proc`. Each of its 10 burst rounds runs 9 tool calls (a one-year range, new readings
-to sync) and 1 token rotation. Numbers: x86-64, musl build.
+to sync) and 1 token rotation. Three runs on x86-64, musl build:
 
-RESOURCE_TABLE
+| | Limit | Measured (3 runs) |
+|---|---|---|
+| Binary | static musl, at most 8 MB | 4.37 MB (4,372,776 bytes; production) |
+| Idle RSS (70 s after the last OMRON call) | at most 8 MB | 4.15 MB (4,148 kB in all runs) |
+| RSS after 90 tool calls and 10 token rotations | at most 8 MB (8,192 kB) | 7.21 to 7.55 MB |
+| Peak RSS during that burst | at most 10 MB | 8.56 to 8.70 MB |
+| Peak live heap | at most 2,500,000 bytes | 2,080,423 to 2,080,433 bytes |
+| CPU time over 60 idle seconds | unchanged | 0 ticks in all runs |
+| Threads while idle and after the burst drains | 1 | 1 in all runs (3 during the burst) |
+
+The peak comes from the biggest reply: the burst asks for a year of readings, which is 921
+of the 2,000 cached ones, built as JSON values and sent twice (as structured content and as
+text). A year of one or two readings a day is half of that. Idle, the process holds none of
+the cache.
 
 The binary uses mimalloc as its allocator. The libc malloc of the static build (Zig's)
 retains freed small allocations and never unmaps those slabs, so a burst would leave 9 to

@@ -9,6 +9,7 @@ publish = false
 
 [workspace]
 members = ["crates/omron-connect"]
+default-members = [".", "crates/omron-connect"]
 resolver = "3"
 
 [workspace.package]
