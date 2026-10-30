@@ -1,0 +1,18 @@
+# A virtual workspace for now. The next step adds a [package] table here for
+# the root `omron-mcp` crate (lib + bin) and keeps the members list.
+[workspace]
+members = ["crates/omron-connect"]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.99"
+license = "MIT"
+
+[profile.release]
+opt-level = "s"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+debug = false
