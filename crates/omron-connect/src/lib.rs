@@ -27,12 +27,17 @@
 //! when it is close to expiry, and may change the session. Save it after each
 //! call. Not affiliated with OMRON Healthcare.
 
+mod client;
 mod error;
 mod http;
 mod reading;
 mod region;
 mod session;
+mod v1;
+mod v2;
 mod wire;
+
+pub use client::Client;
 pub use error::{Error, Result};
 pub use reading::{Batch, Reading, ReadingZone};
 pub use region::{Region, V1Region, V2Region};
