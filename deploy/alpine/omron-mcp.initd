@@ -1,0 +1,30 @@
+#!/sbin/openrc-run
+
+name="omron-mcp"
+description="OMRON blood pressure MCP server"
+
+command="/usr/local/bin/omron-mcp"
+command_args="serve"
+command_user="omron:omron"
+output_log="/var/log/omron-mcp/omron-mcp.log"
+error_log="/var/log/omron-mcp/omron-mcp.err"
+
+# A panic ends the process on purpose (panic = "abort"); supervise-daemon starts it again.
+supervisor="supervise-daemon"
+respawn_delay=2
+respawn_max=5
+
+# On stop, SIGTERM lets the server finish the work it already started: a sync that has
+# downloaded readings still merges them into the cache and saves the cursor. Give it 60 s
+# before the SIGKILL.
+retry="TERM/60/KILL/5"
+
+# The memory cap of this service is rc_cgroup_settings in /etc/conf.d/omron-mcp.
+
+depend() {
+	need net
+}
+
+start_pre() {
+	checkpath --directory --owner omron:omron --mode 0750 /var/log/omron-mcp
+}

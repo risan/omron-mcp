@@ -1,0 +1,24 @@
+# /etc/conf.d/omron-mcp
+# OpenRC sources this file before starting the service; the exports reach omron-mcp.
+
+# The public https origin of the Cloudflare Tunnel hostname: no path, no trailing slash.
+export OMRON_MCP_PUBLIC_URL="https://omron.example.com"
+
+# cloudflared connects to this address, so keep it on loopback. 8080 and 8081 are taken by
+# mfp-mcp and garmin-mcp in the same LXC.
+export OMRON_MCP_LISTEN="127.0.0.1:8082"
+
+# Holds state.json (OMRON tokens, OAuth tokens) and readings.json (the readings cache). Must
+# be owned by omron, mode 0700.
+export OMRON_MCP_DATA_DIR="/var/lib/omron-mcp"
+
+# Time zone for "today" when a tool call gives no date.
+export OMRON_MCP_TZ="Asia/Jakarta"
+
+# Memory cap of this service (cgroup v2). The server needs far less than this; the cap keeps
+# a fault here from squeezing the other services in the same LXC. Write the bytes or use a
+# suffix (K, M). Delete the lines if the LXC has no delegated cgroup controllers.
+rc_cgroup_settings="
+memory.high 24M
+memory.max 32M
+"
