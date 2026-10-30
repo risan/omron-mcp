@@ -225,7 +225,11 @@ async fn status(io: &mut Io, config: &Config, store: &Store<OmronState>) -> Resu
     let (report, oauth) = store
         .read(move |state| {
             let omron = &state.section;
-            let time = |at: Option<Timestamp>| at.map_or("never".to_string(), |at| at.to_string());
+            let time = |at: Option<Timestamp>| {
+                at.map_or("never".to_string(), |at| {
+                    at.strftime("%Y-%m-%d %H:%M:%S UTC").to_string()
+                })
+            };
             let login = match &omron.session {
                 None => "not set (run: omron-mcp login)",
                 Some(_) if omron.login_invalid => {

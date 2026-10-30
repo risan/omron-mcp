@@ -4,7 +4,7 @@
 
 use std::collections::{BTreeMap, HashSet};
 use std::fs::{self, File, OpenOptions};
-use std::io::{self, Write};
+use std::io::{self, BufReader, Write};
 use std::os::unix::fs::OpenOptionsExt;
 use std::path::PathBuf;
 use std::process;
@@ -46,12 +46,12 @@ impl ReadingCache {
 
     /// All cached readings, oldest first. A missing file is an empty cache.
     pub fn load(&self) -> Result<Vec<Reading>, String> {
-        let data = match fs::read(&self.path) {
-            Ok(data) => data,
+        let file = match File::open(&self.path) {
+            Ok(file) => file,
             Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(Vec::new()),
             Err(error) => return Err(format!("read {}: {error}", self.path.display())),
         };
-        let file: CacheFile = serde_json::from_slice(&data)
+        let file: CacheFile = serde_json::from_reader(BufReader::new(file))
             .map_err(|error| format!("parse {}: {error}", self.path.display()))?;
 
         Ok(file.readings)
