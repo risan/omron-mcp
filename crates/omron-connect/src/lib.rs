@@ -28,6 +28,12 @@
 //! call. Not affiliated with OMRON Healthcare.
 
 mod error;
+mod http;
+mod reading;
 mod region;
+mod session;
+mod wire;
 pub use error::{Error, Result};
+pub use reading::{Batch, Reading, ReadingZone};
 pub use region::{Region, V1Region, V2Region};
+pub use session::Session;
