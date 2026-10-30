@@ -157,3 +157,70 @@ pub fn merge_readings(
 
     readings
 }
+
+#[cfg(test)]
+mod tests {
+    use omron_connect::ReadingZone;
+
+    use super::*;
+
+    fn reading(key: &str, measured_at_ms: i64, systolic: u16) -> Reading {
+        Reading {
+            key: key.to_string(),
+            measured_at_ms,
+            zone: ReadingZone::Named("Asia/Jakarta".to_string()),
+            systolic,
+            diastolic: 80,
+            pulse: Some(60),
+            irregular_heartbeat: false,
+            body_movement: false,
+            cuff_wrap_ok: Some(true),
+            device_model: "TEST-BP-1".to_string(),
+            user_number: 1,
+        }
+    }
+
+    fn keys(readings: &[Reading]) -> Vec<&str> {
+        readings
+            .iter()
+            .map(|reading| reading.key.as_str())
+            .collect()
+    }
+
+    #[test]
+    fn merging_sorts_by_time_and_ignores_duplicate_keys() {
+        let merged = merge_readings(
+            vec![reading("b", 200, 120), reading("a", 100, 121)],
+            vec![reading("c", 150, 122), reading("b", 200, 123)],
+            &[],
+        );
+
+        assert_eq!(keys(&merged), ["a", "c", "b"]);
+        assert_eq!(
+            merged[2].systolic, 123,
+            "a re-delivered reading replaces the old one"
+        );
+    }
+
+    #[test]
+    fn merging_drops_the_deleted_keys() {
+        let merged = merge_readings(
+            vec![reading("a", 100, 120), reading("b", 200, 121)],
+            vec![reading("c", 300, 122)],
+            &["b".to_string(), "unknown".to_string()],
+        );
+
+        assert_eq!(keys(&merged), ["a", "c"]);
+    }
+
+    #[test]
+    fn readings_with_the_same_time_keep_a_stable_order() {
+        let merged = merge_readings(
+            vec![],
+            vec![reading("z", 100, 1), reading("y", 100, 2)],
+            &[],
+        );
+
+        assert_eq!(keys(&merged), ["y", "z"]);
+    }
+}

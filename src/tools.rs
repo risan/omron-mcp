@@ -246,7 +246,7 @@ pub fn present(
         summary["diastolic"]["average"].as_f64(),
     ) {
         (Some(systolic), Some(diastolic)) => format!(
-            "{} readings from {start} to {end}: average {systolic:.0}/{diastolic:.0} mmHg.",
+            "{} readings from {start} to {end}: average {systolic}/{diastolic} mmHg.",
             picked.len()
         ),
         _ => format!("No readings from {start} to {end}."),

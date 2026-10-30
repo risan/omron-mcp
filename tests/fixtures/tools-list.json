@@ -1,0 +1,40 @@
+[
+  {
+    "annotations": {
+      "idempotentHint": true,
+      "readOnlyHint": true,
+      "title": "Get blood pressure"
+    },
+    "description": "Read the owner's OMRON blood pressure readings, syncing with OMRON connect first. Dates are YYYY-MM-DD, taken in each reading's own time zone; the default is the 30 days ending today, at most 366 days. `user` picks one cuff user slot (1 or 2). Returns readings newest first (date, local time with seconds, utc_offset, systolic and diastolic in mmHg, pulse in bpm, irregular_heartbeat, body_movement, cuff_wrap_ok, device, user) and a summary with the count and the average, min and max. A note says when the sync failed or is still running and the readings come from the cache.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "properties": {
+        "end_date": {
+          "description": "Last day, YYYY-MM-DD (default today in the owner's timezone)",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start_date": {
+          "description": "First day, YYYY-MM-DD (default 29 days before end_date)",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "user": {
+          "description": "Cuff user slot, such as 1 or 2 (default both)",
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "name": "omron_get_blood_pressure"
+  }
+]
