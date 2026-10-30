@@ -5,6 +5,10 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 description = "Client for the OMRON connect cloud: sign in and read blood pressure readings"
+repository = "https://github.com/risan/omron-mcp"
+readme = "README.md"
+keywords = ["omron", "blood-pressure", "health"]
+categories = ["api-bindings"]
 
 [dependencies]
 bytes = "1"
