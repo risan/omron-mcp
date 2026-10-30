@@ -10,7 +10,7 @@ const REFRESH_MARGIN_MS: i64 = 60_000;
 ///
 /// Every call that needs a login takes `&mut Session` and may refresh it, so
 /// save the session again after each call.
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Session {
     /// Upper-case ISO country code the account signed in with.
     pub country: String,
