@@ -9,3 +9,9 @@
 - The owner ran `set-password` and `login` (country ID). The first sync cached 4 readings.
 - Checks: `/healthz` 200, `/` 200, `/.well-known/oauth-protected-resource` 200, `POST /mcp` without a token 401. RSS 4,292 kB after start.
 - `omron-connect` 0.1.0 published on crates.io by the owner.
+
+## 2026-10-31: new icon
+
+- Binary built from 42edb78 (smoother heart in the icon): 4,377,000 bytes, sha256 `5e0efd96…6fee`. The previous binary is kept as `/usr/local/bin/omron-mcp.prev`.
+- `/favicon.ico` now serves the new icon (sha256 matches `assets/favicon.ico`).
+- Checks: `/healthz` 200, `/` 200, `/favicon.ico` 200, `POST /mcp` without a token 401. Login ok, 4 cached readings. RSS 3,912 kB after start.
